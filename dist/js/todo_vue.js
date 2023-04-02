@@ -6,6 +6,7 @@ createApp({
             storageKey: 'todo',
             itemValue: '',
             items: [],
+            api: 'https://book.niceinfos.com/frontend/api/'
         }
     },
     methods: {
@@ -67,6 +68,56 @@ createApp({
         save() {
             let data = JSON.stringify(this.items);
             localStorage.setItem(this.storageKey, data);
+        },
+        doSaveCloud() {
+            Swal.fire({
+                title: '輸入 UID',
+                input: 'text',
+            }).then(rep => {
+                let uid = rep.value
+
+                let params = {
+                    action: 'todo',
+                    uid: uid,
+                    data: this.items
+                }
+
+                let options = {
+                    method: 'POST',
+                    body: JSON.stringify(params),
+                }
+
+                fetch(this.api, options)
+                    .then(response => {
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log(data);
+                    })
+            })
+        },
+        doLoadCloud() {
+            Swal.fire({
+                title: '輸入 UID',
+                input: 'text',
+            }).then(rep => {
+                let uid = rep.value
+                console.log(uid);
+
+                if (!uid) {
+                    return;
+                }
+
+                let api = `${this.api}?action=todo&uid=${uid}`;
+                fetch(api)
+                    .then(response => {
+                        return response.text();
+                    })
+                    .then(data => {
+                        data = JSON.parse(data);
+                        this.items = data.data;
+                    })
+            })
         }
     },
     mounted() {
