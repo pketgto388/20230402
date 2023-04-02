@@ -17,8 +17,12 @@ item.addEventListener('click', (e) => {
         let isDone = target.classList.contains('delete');
         if (isDone) {
             // 變成未完成
+            target.classList.remove('delete');
+            target.querySelector('input').checked = false;
         } else {
             // 變成完成
+            target.classList.add('delete');
+            target.querySelector('input').checked = true;
         }
     }
 })
@@ -45,7 +49,7 @@ const appendItemES6 = (name) => {
     item.innerHTML += li; // 效能比較差
 }
 
-addBtn.addEventListener('click', () => {
+const addItem = () => {
     if (!valid()) {
         reset();
         return;
@@ -61,6 +65,18 @@ addBtn.addEventListener('click', () => {
     //     let name = itemName.value;
     //     appendItemES6(name);
     // }
+}
+
+addBtn.addEventListener('click', () => {
+    addItem();
+})
+
+itemName.addEventListener('keyup', (e) => {
+    let key = e.key.toLowerCase();
+
+    if (key == 'enter') {
+        addItem();
+    }
 })
 
 const valid = () => {
@@ -71,3 +87,19 @@ const reset = () => {
     itemName.value = '';
     itemName.focus();
 }
+
+
+
+let todoData = [];
+todoData.push({
+    status: 'done',
+    value: '測試'
+});
+
+let todoDataToString = JSON.stringify(todoData);
+localStorage.setItem('todo', todoDataToString);
+console.table(todoData);
+
+let todoDataRestore = JSON.parse(localStorage.getItem('todo'));
+console.log('%c 還原', 'color: red; font-size: 30px;');
+console.table(todoDataRestore);
